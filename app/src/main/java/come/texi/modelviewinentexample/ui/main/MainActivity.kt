@@ -11,5 +11,15 @@ lateinit var viewModel: MainViewModel
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel=ViewModelProvider(this).get(MainViewModel::class.java)
+        showMainFragmemnt()
     }
+
+    private fun showMainFragmemnt() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame,MainFragment())
+            .commit()
+
+    }
+
+
 }

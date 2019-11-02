@@ -2,14 +2,14 @@ package come.texi.modelviewinentexample.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import come.texi.modelviewinentexample.R
+import come.texi.modelviewinentexample.ui.main.state.MainStateEvent
+import come.texi.modelviewinentexample.ui.main.state.MainViewState
 
 /**
  * A simple [Fragment] subclass.
@@ -36,17 +36,50 @@ class MainFragment : Fragment() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer {dataState->
             Log.e(TAG, "secribeObserver: $dataState")
             dataState.blogPost?.let {
+                viewModel.setBlogListData(it)
 
             }
             dataState.user?.let {
+                viewModel.setUser(it)
 
             }
         })
         viewModel.viewState.observe(viewLifecycleOwner, Observer {
             viewState->
             viewState?.blogPost?.let {
-                Log.e(TAG, "secribeObserver: $it");
+                Log.e(TAG, "secribeObserver viewstate blogpost: $it");
             }
+
+            viewState?.user?.let {
+                Log.e(TAG, "secribeObserver viewstate user: $it");
+            }
+
         })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.getuser-> triggeredGetUserEvent()
+
+            R.id.getblog->triggeredGetBlogEvent()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu,menu)
+    }
+    private fun triggeredGetBlogEvent() {
+    viewModel.setStateEvent(MainStateEvent.GetBlogPostEvent())
+    }
+
+    private fun triggeredGetUserEvent() {
+    viewModel.setStateEvent(MainStateEvent.GetUserEvent("1"))
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 }

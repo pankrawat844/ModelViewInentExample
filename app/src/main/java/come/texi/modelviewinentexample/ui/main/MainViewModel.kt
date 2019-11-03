@@ -10,6 +10,7 @@ import come.texi.modelviewinentexample.repository.Repository
 import come.texi.modelviewinentexample.ui.main.state.MainStateEvent
 import come.texi.modelviewinentexample.ui.main.state.MainViewState
 import come.texi.modelviewinentexample.utils.AbsentLiveData
+import come.texi.modelviewinentexample.utils.DataState
 
 class MainViewModel : ViewModel() {
     private val _stateEvent: MutableLiveData<MainStateEvent> = MutableLiveData()
@@ -19,14 +20,14 @@ class MainViewModel : ViewModel() {
         get() = _viewState
 
 
-    val dataState: LiveData<MainViewState> = Transformations
+    val dataState: LiveData<DataState<MainViewState>> = Transformations
         .switchMap(_stateEvent){stateEvent ->
             stateEvent?.let {
                 handleStateEvent(stateEvent)
             }
         }
 
-    private fun handleStateEvent(it: MainStateEvent): LiveData<MainViewState> {
+    private fun handleStateEvent(it: MainStateEvent): LiveData<DataState<MainViewState>> {
         when (it) {
             is MainStateEvent.GetBlogPostEvent -> {
                 return Repository.getBlogPosts()

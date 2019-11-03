@@ -35,12 +35,23 @@ class MainFragment : Fragment() {
     fun secribeObserver(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer {dataState->
             Log.e(TAG, "secribeObserver: $dataState")
-            dataState.blogPost?.let {
-                viewModel.setBlogListData(it)
+            dataState.data?.let {
+                mainViewState ->
+                mainViewState.blogPost?.let {
+                    viewModel.setBlogListData(it)
+
+                }
+                mainViewState.user?.let {
+                    viewModel.setUser(it)
+
+                }
+            }
+
+            dataState.laoding?.let {
 
             }
-            dataState.user?.let {
-                viewModel.setUser(it)
+
+            dataState.message?.let {
 
             }
         })

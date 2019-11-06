@@ -1,5 +1,6 @@
 package come.texi.modelviewinentexample.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -8,8 +9,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import come.texi.modelviewinentexample.R
+import come.texi.modelviewinentexample.ui.DataStateListner
 import come.texi.modelviewinentexample.ui.main.state.MainStateEvent
 import come.texi.modelviewinentexample.ui.main.state.MainViewState
+import java.lang.ClassCastException
 
 /**
  * A simple [Fragment] subclass.
@@ -17,6 +20,7 @@ import come.texi.modelviewinentexample.ui.main.state.MainViewState
 class MainFragment : Fragment() {
     private val TAG: String = "MainFragment"
     lateinit var viewModel: MainViewModel
+    lateinit var dataStateListner:DataStateListner
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,6 +39,9 @@ class MainFragment : Fragment() {
     fun secribeObserver(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer {dataState->
             Log.e(TAG, "secribeObserver: $dataState")
+            //handle loading and message in activity
+            dataStateListner.onDataStateChange(dataState)
+
             dataState.data?.let {
                 mainViewState ->
                 mainViewState.blogPost?.let {
@@ -47,13 +54,6 @@ class MainFragment : Fragment() {
                 }
             }
 
-            dataState.laoding?.let {
-
-            }
-
-            dataState.message?.let {
-
-            }
         })
         viewModel.viewState.observe(viewLifecycleOwner, Observer {
             viewState->
@@ -92,5 +92,16 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    try {
+        dataStateListner= context as DataStateListner
+
+    }catch (e:ClassCastException)
+    {
+        println("Debug $context must be implement DataStateListner")
+    }
     }
 }
